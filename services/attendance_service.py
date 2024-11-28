@@ -41,18 +41,37 @@ def fetch_attendance_all():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM attendance')
+    # Fetch all columns (roll number and dates with attendance status)
+    cursor.execute("SELECT * FROM attendance")
+    columns = [col[0] for col in cursor.description]  # Get column names
     records = cursor.fetchall()
     conn.close()
 
-    return {"records": records}
+    # Restructure the data
+    attendance_data = []
+    for record in records:
+        roll_no = record[0]  # Assuming the first column is Roll No
+        date_status = {columns[i]: record[i] for i in range(1, len(columns)) if columns[i] not in ['date', 'status']}  # Exclude unwanted columns
+        attendance_data.append({"Roll No": roll_no, "Attendance": date_status})
+
+    return {"records": attendance_data}
 
 def fetch_attendance(roll_no):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM attendance WHERE roll_no = ?', (roll_no,))
+    # Fetch all columns (roll number and dates with attendance status) for the specific roll_no
+    cursor.execute("SELECT * FROM attendance WHERE roll_no = ?", (roll_no,))
+    columns = [col[0] for col in cursor.description]  # Get column names
     records = cursor.fetchall()
     conn.close()
 
-    return {"records": records}
+    # Restructure the data for the specific student
+    if records:
+        record = records[0]  # We assume there is only one record for a given roll_no
+        roll_no = record[0]  # Extract Roll No
+        date_status = {columns[i]: record[i] for i in range(1, len(columns))}  # Skip Roll No
+        return {"Roll No": roll_no, "Attendance": date_status}
+    else:
+        return {"message": "No attendance data found for this roll number"}
+
