@@ -1,0 +1,11 @@
+Software Requirements:
+    Backend:
+        -Python
+        -sqlite3
+        -Flask
+        -DeepFace
+        -Tensorflow
+        -pywahtkit/twilio
+    Frontend:
+        -Javascript
+        -Node.js

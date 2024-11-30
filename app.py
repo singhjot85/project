@@ -65,7 +65,18 @@ def api_delete_student(roll_no):
     response = delete_student(roll_no)
     return jsonify(response)
 
-
+@app.route('/sendAttendance/<rollno>', methods=['POST'])
+def send_attendance_message(rollno):
+    try:
+        attendance_data = fetch_attendance(rollno)
+        if not attendance_data:
+            return jsonify({"message": "No attendance data found"}), 404
+        
+        import services.sending_services as ss
+        ss.send_whatsapp_message(rollno, attendance_data)
+        return jsonify({"message": "WhatsApp message sent successfully!"}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}

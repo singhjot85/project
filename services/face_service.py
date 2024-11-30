@@ -1,4 +1,4 @@
-import cv2, os
+import os
 from deepface import DeepFace
 from utils.log_utils import log_message
 

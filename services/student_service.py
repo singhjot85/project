@@ -1,10 +1,14 @@
 from database import get_connection
 
+def complete_mobile_number(mobile_number):
+    return mobile_number if mobile_number.startswith('+') else '+91' + mobile_number
+
 def add_student(roll_no, name, mobile_no):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
+        mobile_no= complete_mobile_number(mobile_no)
         cursor.execute('INSERT INTO students (roll_no, name, mobile_no) VALUES (?, ?, ?)', (roll_no, name, mobile_no))
         conn.commit()
         return {"message": f"Student {name} added successfully"}
